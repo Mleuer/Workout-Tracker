@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const PORT = process.env.PORT || 3000;
 
-const User = require("./userModel.js");
+const db = require("./models");
 const app = express();
 
 app.use(logger("dev"));
@@ -14,14 +14,18 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/userdb", { useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workoutdb", {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+});
 
-app.post("/submit", ({body}, res) => {
-  User.create(body)
-    .then(dbUser => {
-      res.json(dbUser);
+app.get("/api/workouts", (req, res) => {
+  db.Workout.find({})
+    .populate("exercises")
+    .then((dbWorkout) => {
+      res.json(dbWorkout);
     })
-    .catch(err => {
+    .catch((err) => {
       res.json(err);
     });
 });
