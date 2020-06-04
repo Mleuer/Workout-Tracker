@@ -13,8 +13,11 @@ router.get("/api/workouts", (req, res) => {
       });
   });
 
+
   router.get("/api/workouts/range", (req, res) => {
-    db.Workout.find({})
+    let date = new Date();
+
+    db.Workout.find({day : {$gte: new Date().setDate(new Date().getDate()-7)}})
       .then((dbWorkout) => {
         res.json(dbWorkout);
       })
@@ -22,6 +25,7 @@ router.get("/api/workouts", (req, res) => {
         res.json(err);
       });
   });
+
 
   router.post("/api/workouts", ({ body }, res) => {
     db.Workout.create(body)
